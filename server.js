@@ -6,6 +6,32 @@ var io = require('socket.io')(http);
 var moment = require('moment');
 app.use(express.static(__dirname+'/public'));
 var clientInfo = {};
+
+
+// sends current user to provided socket function
+function sendCurrentUser(socket){
+	var info = clientInfo[socket.id];
+	var users = [];
+
+	if (typeof info === 'undefined'){
+		return;
+	}
+	Object.keys(clientInfo).forEach(function(sockedId){
+		var userInfo = clientInfo[sockedId];
+
+		if (info.room === userInfo.room){
+			users.push(userInfo.name);
+		}
+	});
+	socket.emit('message',{
+		name: 'System',
+		text: 'Current users: ' + users.join(', '),
+		timestamp: moment().valueOf()
+	});
+}
+
+
+
 io.on('connection',function(socket){
 	console.log('User connected via socket.io');
 	// handle disconnect
@@ -33,18 +59,25 @@ io.on('connection',function(socket){
 		});
 
 	});
-	//
+	// nachrichten versenden
 	
 	socket.on('message', function(message){
 		console.log('message recived ' + message.text);
 			//socket.broadcast.emit('message', message)    SENDET an alle aAU?ER dem Absender
-			message.timestamp = moment().valueOf();
+			if (message.text === '@currentUsers'){
+				sendCurrentUser(socket);
+
+			}else{
+
+
+				message.timestamp = moment().valueOf();
 			//sendet an alle User:
 				//io.emit('message', message);
 
 			// sendet ann alle user im gleichen raum
 			io.to(clientInfo[socket.id].room).emit('message', message)
-		});
+		}
+	});
 
 	// timestamp 
 
