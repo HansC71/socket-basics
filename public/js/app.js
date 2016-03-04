@@ -3,10 +3,18 @@ var name = getQueryVariable('name') || 'Anonymous';
 var room = getQueryVariable('room');
 
 console.log(name + 'wants to join ' + room)
+
+// updtae room
+jQuery('.room-title').text(room);
 var socket = io();
 
 socket.on('connect',function(){
-	console.log('Connected to Server')
+	console.log('Connected to Server');
+	// für eigenen socket pro raum
+	socket.emit('joinRoom', {
+		name: name,
+		room: room
+	});
 });
 
 socket.on('message',function(message){
