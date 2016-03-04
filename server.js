@@ -8,7 +8,20 @@ app.use(express.static(__dirname+'/public'));
 var clientInfo = {};
 io.on('connection',function(socket){
 	console.log('User connected via socket.io');
+	// handle disconnect
+	socket.on('disconnect',function(){
+		var userData = clientInfo[socket.id]
+		if (typeof userData != 'undefined'){
+			socket.leave(userData.room);
+			io.to(userData.room).emit('message',{
+				name: 'System',
+				text: userData.name  + ' has left',
+				timestamp: moment.valueOf()
+			});
+			delete clientInfo[socket.id];
+		}
 
+	});
 	// für eigenen Raum Socket
 	socket.on('joinRoom',function(req){
 		clientInfo[socket.id]  = req;
@@ -18,6 +31,7 @@ io.on('connection',function(socket){
 			text: req.name + 'has join',
 			timestamp: moment().valueOf()
 		});
+
 	});
 	//
 	
