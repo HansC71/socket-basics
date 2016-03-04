@@ -10,11 +10,11 @@ io.on('connection',function(socket){
 	console.log('User connected via socket.io');
 	
 	socket.on('message', function(message){
-			console.log('message recived ' + message.text);
+		console.log('message recived ' + message.text);
 			//socket.broadcast.emit('message', message)    SENDET an alle aAU?ER dem Absender
 			message.timestamp = moment().valueOf();
 			io.emit('message', message)
-	});
+		});
 
 	// timestamp 
 

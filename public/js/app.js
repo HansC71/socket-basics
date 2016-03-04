@@ -10,13 +10,13 @@ socket.on('connect',function(){
 });
 
 socket.on('message',function(message){
-var momentTimestamp = moment.utc(message.timestamp);
-var $message = jQuery('.messages');
-console.log('new message');
-console.log(message.text);
-$message.append('<p><strong>' + message.name + '  hier  ' + momentTimestamp.local().format('H:mm') + '</strong></p>');
+	var momentTimestamp = moment.utc(message.timestamp);
+	var $message = jQuery('.messages');
+	console.log('new message');
+	console.log(message.text);
+	$message.append('<p><strong>' + message.name + '  hier  ' + momentTimestamp.local().format('H:mm') + '</strong></p>');
 
-$message.append('<p>' + message.text +'</p>');
+	$message.append('<p>' + message.text +'</p>');
 
 })
 
